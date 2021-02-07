@@ -35,9 +35,10 @@ const useStyles = createUseStyles({
   stream: {
     display: 'flex',
     flex: 1,
-    width: 96,
-    height: 96,
+    width: 130,
+    height: 130,
     background: 'black',
+    margin:'-20px',
   },
   button: {
     padding: 10,
