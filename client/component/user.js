@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useCallback} from 'react';
+import React, {useEffect, useRef, useCallback, useState} from 'react';
 import throttle from 'lodash/throttle';
 import {createUseStyles} from 'react-jss';
 import {useStore} from 'yaver';
@@ -75,8 +75,28 @@ export default function({id, ...props}) {
   const classes = useStyles();
   const videoRef = useRef(null);
   const [store, setStore] = useStore('main');
+  const [call_, setCall_] = useState();
 
   const isMe = id === store.me.id;
+
+  const callUser = async () => {
+    console.log(`Calling ${id}`);
+    const call = Action.getPeerJS().call(id, await Action.getUserStream());
+    setCall_(call);
+    call.on('stream', remotePeerStream => {
+      videoRef.current.srcObject = remotePeerStream;
+      videoRef.current.play();
+    });
+    call.on('close', () => {
+      console.log(`User call ended ${id}`);
+    });
+    call.on('error', error => {
+      console.log(`User call error ${id}`, error);
+      setCall_(null);
+      console.log(`Recalling ${id}`);
+      callUser();
+    });
+  }
 
   useEffect(async () => {
     if (isMe) {
@@ -85,24 +105,15 @@ export default function({id, ...props}) {
       videoRef.current.muted = true;
       videoRef.current.play();
     } else {
-      const call = Action.getPeerJS().call(id, await Action.getUserStream());
-      call.on('stream', remotePeerStream => {
-        videoRef.current.srcObject = remotePeerStream;
-        videoRef.current.play();
-      });
-      call.on('close', () => {
-        console.log(`User call ended ${id}`);
-      });
-      call.on('error', error => {
-        console.log(`User call error ${id}`, error);
-      });
+      callUser();
     }
 
     return () => {
       if (isMe) {
 
       } else {
-
+        setCall_(null);
+        call.close();
       }
     };
   }, []);
