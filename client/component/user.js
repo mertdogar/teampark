@@ -25,7 +25,8 @@ const useStyles = createUseStyles({
     border: '3px solid #555b7d',
     transition: 'all 0.2s',
     overflow: 'hidden',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    userSelect: 'none'
   },
   me: {
     transition: 'none',
