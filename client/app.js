@@ -29,18 +29,20 @@ export default function(props) {
   const [showLoby, setShowLoby] = useState(true);
   const [store, setStore] = useStore('main');
 
-
   useEffect(async () => {
-    const {pathname, hostname, port} = new URL(location.href);
-
     await Action.initUserStream();
+  }, []);
 
+  const onLobyubmit = useCallback(async () => {
+    setShowLoby(false);
+
+    const {pathname, hostname, port} = new URL(location.href);
     await Action.connect({
       roomId: pathname.slice(1),
       host: hostname,
       port: parseInt(port)
     });
-  }, []);
+  });
 
 
   return (

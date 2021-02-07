@@ -13,7 +13,7 @@ createStore('main', {
     x: 0,
     y: 0,
     z: 0,
-    name: localStorage.getItem('name') || chance.name()
+    name: localStorage.getItem('name') || chance.name(),
   },
   users: []
 });
@@ -61,7 +61,8 @@ const updateUser = (id, state) => {
 
 const updateMe = (state) => {
   stores.update('main', {...store, me: {...store.me, ...state}});
-  socket.emit('update', store.me);
+  if (socket)
+    socket.emit('update', store.me);
 }
 
 
@@ -71,6 +72,9 @@ const connect = ({host, port, roomId}) => {
   socket.on('connect', () => {
     console.log(`Connected!`);
     console.log(`SocketID=${socket.id}`);
+
+    setMicEnabled(store.me.micEnabled);
+    setVideoEnabled(store.me.videoEnabled);
   });
 
 
@@ -121,7 +125,12 @@ const connect = ({host, port, roomId}) => {
     }
   });
   myPeer.on('open', id => {
-    stores.update('main', {me: {id, x: 0, y: 0, z: 0, micEnabled: true, videoEnabled: true}});
+    stores.update('main', {
+      me: {
+        ...store.me,
+        id
+      }
+    });
     socket.emit('join-room', roomId, store.me);
 
     myPeer.on('call', async (call) => {
