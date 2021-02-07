@@ -33,7 +33,10 @@ const useStyles = createUseStyles({
   },
   stream: {
     display: 'flex',
-    flex: 1
+    flex: 1,
+    width: 96,
+    height: 96,
+    background: 'black',
   },
   button: {
     padding: 10,
@@ -140,7 +143,7 @@ export default function({id, ...props}) {
 
     return (
       <div style={{transform: `translate3d(${user.x}px, ${user.y}px, ${user.z}px) scale(${scale})`}} className={classnames(classes.root, {[classes.me]: isMe})}>
-        <video className={classes.stream} ref={videoRef} autoPlay={true}/>
+        <video playsInline className={classes.stream} ref={videoRef} autoPlay={true}/>
         <div className={classes.indicators}>
           {
             !user.videoEnabled &&
@@ -165,7 +168,7 @@ export default function({id, ...props}) {
       onDrag={onDrag}
       onStop={onDragEnd}>
       <div className={classnames(classes.root, {[classes.me]: isMe})}>
-        <video className={classes.stream} ref={videoRef} autoPlay={true}/>
+        <video playsInline className={classes.stream} ref={videoRef} autoPlay={true}/>
         <div className={classes.indicators}>
           {
             !store.me.videoEnabled &&
