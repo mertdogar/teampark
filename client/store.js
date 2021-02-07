@@ -1,4 +1,5 @@
 import Chance from 'chance';
+import {toast} from 'react-toastify';
 import cloneDeep from 'lodash/cloneDeep';
 import find from 'lodash/find';
 import assign from 'lodash/assign';
@@ -84,10 +85,12 @@ const connect = ({host, port, roomId}) => {
   });
 
   socket.on('user-connected', payload => {
+    toast(`${payload.name || payload.id} connected`);
     console.log('User connected', payload);
   });
 
   socket.on('user-disconnected', payload => {
+    toast(`${payload.name || payload.id} disconnected`);
     console.log('User disconnected', payload);
   });
 

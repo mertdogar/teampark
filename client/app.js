@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
+import {ToastContainer} from 'react-toastify';
 import {createUseStyles} from 'react-jss';
 import {useStore} from 'yaver';
 import {Action} from './store';
@@ -6,6 +7,8 @@ import Loby from './component/loby';
 import Controls from './component/controls';
 import Users from './component/users';
 import Room from './component/room';
+
+import 'react-toastify/dist/ReactToastify.min.css';
 
 
 
@@ -45,7 +48,8 @@ export default function(props) {
       <Room/>
       <Users/>
       {!showLoby && <Controls/>}
-      {showLoby && <Loby onSubmit={() => setShowLoby(false)}/>}
+      {showLoby && <Loby onSubmit={onLobyubmit}/>}
+      <ToastContainer/>
     </div>
   );
 };
