@@ -9,18 +9,13 @@ const {nanoid} = require('nanoid');
 
 app.use(express.static('public', {index: null}))
 
-
 app.get('/', (req, res) => {
-  res.status(200).end();
-})
+  res.redirect(`/${nanoid(10)}`);
+});
 
 app.get('/health', (req, res) => {
   res.status(200).json({success: true});
-})
-
-app.get('/new', (req, res) => {
-  res.redirect(`/${nanoid(10)}`)
-})
+});
 
 app.get('/:room', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
@@ -46,9 +41,7 @@ class Room {
   toJSON() {
     return {
       users: _.map(this.sockets, socket => {
-        return {
-          ...socket.user
-        };
+        return {...socket.user};
       }),
       id: this.id
     }
@@ -71,15 +64,12 @@ const removeUserFromAllRooms = (socket) => {
 }
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
-
   socket.on('join-room', async (roomId, user) => {
     socket.user = user;
 
     console.log(`JOIN: ${socket.user.id}=>${roomId}`);
     const room = getRoom(roomId);
     await room.add(socket);
-
 
     io.to(roomId).emit('room-updated', room.toJSON());
 
