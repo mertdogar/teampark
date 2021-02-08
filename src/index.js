@@ -5,6 +5,8 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const SpaceManager = require('./space-manager');
+const spaceManager = new SpaceManager(io);
 const {nanoid} = require('nanoid');
 
 app.use(express.static('public', {index: null}))
@@ -21,71 +23,28 @@ app.get('/:room', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
 
-
-class Room {
-  constructor(id) {
-    this.id = id;
-    this.sockets = {};
-  }
-
-  async add(socket) {
-    await socket.join(this.id);
-    this.sockets[socket.user.id] = socket;
-  }
-
-  async remove(socket) {
-    await socket.leave(this.id);
-    delete this.sockets[socket.user.id];
-  }
-
-  toJSON() {
-    return {
-      users: _.map(this.sockets, socket => {
-        return {...socket.user};
-      }),
-      id: this.id
-    }
-  }
-}
-
-const rooms = {};
-
-const getRoom = (roomId) => {
-  if (!rooms[roomId])
-    rooms[roomId] = new Room(roomId);
-  return rooms[roomId];
-}
-
-
-const removeUserFromAllRooms = (socket) => {
-  for (let room of Object.values(rooms)) {
-    delete room.sockets[socket.user.id];
-  }
-}
-
 io.on('connection', (socket) => {
-  socket.on('join-room', async (roomId, user) => {
+  socket.on('space.join', async (spaceId, user) => {
     socket.user = user;
 
-    console.log(`JOIN: ${socket.user.id}=>${roomId}`);
-    const room = getRoom(roomId);
-    await room.add(socket);
+    console.log(`JOIN: ${socket.user.id}=>${spaceId}`);
+    const space = spaceManager.getSpaceById(spaceId);
+    await space.add(socket);
 
-    io.to(roomId).emit('room-updated', room.toJSON());
+    space.broadcastState();
 
     /* Let everyone know that a new user was connected */
-    socket.to(roomId).broadcast.emit('user-connected', socket.user);
+    socket.to(spaceId).broadcast.emit('user.conected', socket.user);
 
-
-    socket.on('update', (user) => {
+    socket.on('user.update', (user) => {
       socket.user = user;
-      io.to(roomId).emit('room-updated', room.toJSON());
+      space.broadcastState();
     });
 
     socket.on('disconnect', () => {
-      removeUserFromAllRooms(socket);
-      io.to(roomId).emit('room-updated', room.toJSON());
-      socket.to(roomId).broadcast.emit('user-disconnected', socket.user)
+      spaceManager.removeUserFromRooms(socket);
+      space.broadcastState();
+      socket.to(spaceId).broadcast.emit('user.disconnected', socket.user)
     });
   })
 });

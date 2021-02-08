@@ -40,7 +40,7 @@ export default function(props) {
 
     const {pathname, hostname, port} = new URL(location.href);
     await Action.connect({
-      roomId: pathname.slice(1),
+      spaceId: pathname.slice(1),
       host: hostname,
       port: parseInt(port)
     });

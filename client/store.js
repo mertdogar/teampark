@@ -74,11 +74,11 @@ const updateUser = (id, state) => {
 const updateMe = (state) => {
   stores.update('main', {...store, me: {...store.me, ...state}});
   if (socket)
-    socket.emit('update', store.me);
+    socket.emit('user.update', store.me);
 }
 
 
-const connect = ({host, port, roomId}) => {
+const connect = ({host, port, spaceId}) => {
   socket = io('/');
 
   socket.on('connect', () => {
@@ -90,7 +90,7 @@ const connect = ({host, port, roomId}) => {
   });
 
 
-  socket.on('room-updated', room => {
+  socket.on('room.updated', room => {
     stores.update('main', {users: room.users.map(user => {
       const existing = store.users.find(user => user.id === user.id);
       return {
@@ -100,12 +100,12 @@ const connect = ({host, port, roomId}) => {
     })});
   });
 
-  socket.on('user-connected', payload => {
+  socket.on('user.connected', payload => {
     toast(`${payload.name || payload.id} connected`);
     console.log('User connected', payload);
   });
 
-  socket.on('user-disconnected', payload => {
+  socket.on('user.disconnected', payload => {
     toast(`${payload.name || payload.id} disconnected`);
     console.log('User disconnected', payload);
   });
@@ -113,26 +113,10 @@ const connect = ({host, port, roomId}) => {
   myPeer = new Peer({
     config: {
       iceServers: [
-        {url:'stun:stun01.sipphone.com'},
-        {url:'stun:stun.ekiga.net'},
-        {url:'stun:stun.fwdnet.net'},
-        {url:'stun:stun.ideasip.com'},
-        {url:'stun:stun.iptel.org'},
-        {url:'stun:stun.rixtelecom.se'},
-        {url:'stun:stun.schlund.de'},
-        {url:'stun:stun.l.google.com:19302'},
-        {url:'stun:stun1.l.google.com:19302'},
-        {url:'stun:stun2.l.google.com:19302'},
-        {url:'stun:stun3.l.google.com:19302'},
-        {url:'stun:stun4.l.google.com:19302'},
-        {url:'stun:stunserver.org'},
-        {url:'stun:stun.softjoys.com'},
-        {url:'stun:stun.voiparound.com'},
-        {url:'stun:stun.voipbuster.com'},
-        {url:'stun:stun.voipstunt.com'},
-        {url:'stun:stun.voxgratia.org'},
-        {url:'stun:stun.xten.com'},
-        {'url': 'turn:numb.viagenie.ca', 'credential': '7kSQDryCsV3M3VLq', 'username': 'mertdogar@gmail.com'},
+        {"url": "stun:global.stun.twilio.com:3478?transport=udp", "urls": "stun:global.stun.twilio.com:3478?transport=udp"},
+        {"url": "turn:global.turn.twilio.com:3478?transport=udp", "username": "d763ce30f4d36e59a5dc683252b625fafb3362d1290aa46d6be8519674c07533", "urls": "turn:global.turn.twilio.com:3478?transport=udp", "credential": "evt206ipjqfq3tA5S7C3XelweJGiFpU57+Zwdx4s71Q="},
+        {"url": "turn:global.turn.twilio.com:3478?transport=tcp", "username": "d763ce30f4d36e59a5dc683252b625fafb3362d1290aa46d6be8519674c07533", "urls": "turn:global.turn.twilio.com:3478?transport=tcp", "credential": "evt206ipjqfq3tA5S7C3XelweJGiFpU57+Zwdx4s71Q="},
+        {"url": "turn:global.turn.twilio.com:443?transport=tcp", "username": "d763ce30f4d36e59a5dc683252b625fafb3362d1290aa46d6be8519674c07533", "urls": "turn:global.turn.twilio.com:443?transport=tcp", "credential": "evt206ipjqfq3tA5S7C3XelweJGiFpU57+Zwdx4s71Q="}
       ]
     }
   });
@@ -143,7 +127,7 @@ const connect = ({host, port, roomId}) => {
         id
       }
     });
-    socket.emit('join-room', roomId, store.me);
+    socket.emit('space.join', spaceId, store.me);
 
     myPeer.on('call', async (call) => {
       console.log(`@@ Receive call from ${call.peer}`);
