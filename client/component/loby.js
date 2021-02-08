@@ -1,3 +1,4 @@
+import browser from 'browser-detect';
 import filter from 'lodash/filter';
 import React, {useEffect, useCallback, useState} from 'react';
 import {createUseStyles} from 'react-jss';
@@ -114,6 +115,9 @@ export default function(props) {
   const [videoInputDevices, setVideoInputDevices] = useState([]);
 
   useEffect(async () => {
+    if (browser().name === 'safari')
+      await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+
     const devices = await navigator.mediaDevices.enumerateDevices();
 
     const audioInputDevices_ = filter(devices, {kind: 'audioinput'});
