@@ -1,3 +1,4 @@
+import filter from 'lodash/filter';
 import React, {useEffect, useCallback, useState} from 'react';
 import {createUseStyles} from 'react-jss';
 import {useStore} from 'yaver';
@@ -58,7 +59,24 @@ const useStyles = createUseStyles({
     padding: '6px 8px',
     color: '#313030',
     borderRadius: '5px',
-    textAlign: 'center'
+    textAlign: 'center',
+    width: '100%',
+    marginTop: 5,
+  },
+  label: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '0.8em'
+  },
+  deviceSelector: {
+    color: '#313030',
+    border: 0,
+    outline: 'none',
+    padding: '6px 8px',
+    textAlign: 'center',
+    borderRadius: '5px',
+    width: '100%',
+    marginTop: 5,
   },
   submit: {
     color: 'white',
@@ -90,19 +108,46 @@ export default function(props) {
 
   const [store, setStore] = useStore('main');
   const [name, setName] = useState(store.me.name);
+  const [audioDevice, setAudioDevice] = useState(localStorage.getItem('defaultAudioDeviceId'));
+  const [videoDevice, setVideoDevice] = useState(localStorage.getItem('defaultVideoDeviceId'));
+  const [audioInputDevices, setAudioInputDevices] = useState([]);
+  const [videoInputDevices, setVideoInputDevices] = useState([]);
 
-  useEffect(() => {
+  useEffect(async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+    const audioInputDevices_ = filter(devices, {kind: 'audioinput'});
+    const videoInputDevices_ = filter(devices, {kind: 'videoinput'});
+
+    setAudioInputDevices(audioInputDevices_);
+    setVideoInputDevices(videoInputDevices_);
+
+    setAudioDevice(localStorage.getItem('defaultAudioDeviceId') || audioInputDevices_[0].deviceId);
+    setVideoDevice(localStorage.getItem('defaultVideoDeviceId') || videoInputDevices_[0].deviceId);
 
   }, []);
 
   const submit = useCallback(() => {
       Action.updateMe({name});
       localStorage.setItem('name', name)
-      props.onSubmit();
+      props.onSubmit({
+        videoDeviceId: videoDevice,
+        audioDeviceId: audioDevice,
+      });
   });
 
   const onNameChange = useCallback((event) => {
       setName(event.target.value);
+  });
+
+  const onVideoDeviceChange = useCallback((event) => {
+    localStorage.setItem('defaultVideoDeviceId', event.target.value);
+    setVideoDevice(event.target.value);
+  });
+
+  const onAudioDeviceChange = useCallback((event) => {
+    localStorage.setItem('defaultAudioDeviceId', event.target.value);
+    setAudioDevice(event.target.value);
   });
 
   const toggleMic = useCallback(() => {
@@ -123,7 +168,26 @@ export default function(props) {
     <div className={classes.root}>
       <div className={classes.dialog}>
         <div style={{marginBottom: 20}} className={classes.controls}>
-          <input value={name} onChange={onNameChange} type="text" className={classes.name}/>
+          <label className={classes.label}>
+            Name
+            <input value={name} onChange={onNameChange} type="text" className={classes.name}/>
+          </label>
+        </div>
+        <div style={{marginBottom: 20}} className={classes.controls}>
+          <label className={classes.label}>
+            Video Device
+            <select className={classes.deviceSelector} value={videoDevice} onChange={onVideoDeviceChange}>
+              {videoInputDevices.map(device => <option value={device.deviceId}>{device.label}</option>)}
+            </select>
+          </label>
+        </div>
+        <div style={{marginBottom: 20}} className={classes.controls}>
+          <label className={classes.label}>
+            Audio Device
+            <select className={classes.deviceSelector} value={audioDevice} onChange={onAudioDeviceChange}>
+              {audioInputDevices.map(device => <option value={device.deviceId}>{device.label}</option>)}
+            </select>
+          </label>
         </div>
         <div style={{marginBottom: 20}} className={classes.controls}>
           <div className={classnames(classes.button, {[classes.on]: store.me.videoEnabled})} onClick={toggleVideo}>
@@ -136,7 +200,7 @@ export default function(props) {
           </div>
         </div>
         <div className={classes.controls}>
-          <div onClick={submit} className={classnames(classes.submit, {[classes.disabled]: !name})}>Save</div>
+          <div onClick={submit} className={classnames(classes.submit, {[classes.disabled]: !name})}>Join</div>
         </div>
       </div>
     </div>

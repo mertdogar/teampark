@@ -30,11 +30,13 @@ export default function(props) {
   const [store, setStore] = useStore('main');
 
   useEffect(async () => {
-    await Action.initUserStream();
+
   }, []);
 
-  const onLobyubmit = useCallback(async () => {
+  const onLobyubmit = useCallback(async (data) => {
     setShowLoby(false);
+
+    await Action.initUserStream(data);
 
     const {pathname, hostname, port} = new URL(location.href);
     await Action.connect({

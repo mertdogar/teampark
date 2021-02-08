@@ -14,6 +14,8 @@ createStore('main', {
     y: 0,
     z: 0,
     name: localStorage.getItem('name') || chance.name(),
+    videoEnabled: true,
+    micEnabled: true
   },
   users: []
 });
@@ -25,15 +27,25 @@ let socket = null;
 let myPeer = null;
 let myStream = null;
 
+navigator.mediaDevices.ondevicechange = async (event) => {
+  toast(`Media device changed`);
+};
 
-const initUserStream = () => {
-  return navigator.mediaDevices.getUserMedia({
+const initUserStream = (data) => {
+  const constraints = {
     video: true,
     audio: true
-  }).then(stream => {
+  };
+
+  if (data.videoDeviceId) constraints.video = {deviceId: data.videoDeviceId};
+  if (data.audioDeviceId) constraints.audios = {deviceId: data.audioDeviceId};
+
+  return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
     myStream = stream;
     return stream;
   });
+
+
 }
 
 const getUserStream = async () => {
