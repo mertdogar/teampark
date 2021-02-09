@@ -24,7 +24,7 @@ class Space {
       new Widget({
         id: 'asd1r',
         type: 'player',
-        name: 'A Video',
+        name: `Township Rebellion - Fusion Festival, Turmbühne 2018`,
         createdAt: new Date(),
         ownerId: null,
         x: 200,
@@ -32,7 +32,20 @@ class Space {
         z: 1,
         width: 300,
         height: 200,
-        data: 'https://www.youtube.com/watch?v=oUFJJNQGwhk',
+        data: 'https://www.youtube.com/watch?v=e-hWYG7O2dA',
+      }),
+      new Widget({
+        id: 'badsssd1r',
+        type: 'player',
+        name: `Spinnin' | 24/7 Live Radio`,
+        createdAt: new Date(),
+        ownerId: null,
+        x: 900,
+        y: 400,
+        z: 1,
+        width: 150,
+        height: 100,
+        data: 'https://www.youtube.com/watch?v=BD_guK9b64k  ',
       })
     ];
 
