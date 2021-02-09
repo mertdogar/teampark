@@ -16,7 +16,7 @@ const useStyles = createUseStyles({
     backgroundColor: 'black',
     overflow: 'scroll'
   },
-  room: {
+  space: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -36,7 +36,7 @@ export default function(props) {
   }, []);
 
   return <div className={classes.root}>
-    <div className={classes.room}>
+    <div className={classes.space}>
       {map(store.users, user => <User key={user.id} id={user.id} />)}
     </div>
   </div>;

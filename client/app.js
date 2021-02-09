@@ -6,7 +6,7 @@ import {Action} from './store';
 import Loby from './component/loby';
 import Controls from './component/controls';
 import Users from './component/users';
-import Room from './component/room';
+import Space from './component/space';
 
 import 'react-toastify/dist/ReactToastify.min.css';
 
@@ -49,7 +49,7 @@ export default function(props) {
 
   return (
     <div className={classes.root}>
-      <Room/>
+      <Space/>
       <Users/>
       {!showLoby && <Controls/>}
       {showLoby && <Loby onSubmit={onLobyubmit}/>}

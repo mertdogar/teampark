@@ -90,14 +90,17 @@ const connect = ({host, port, spaceId}) => {
   });
 
 
-  socket.on('room.updated', room => {
-    stores.update('main', {users: room.users.map(user => {
+  socket.on('space.updated', room => {
+
+    const mergedUsers = room.users.map(user => {
       const existing = store.users.find(user => user.id === user.id);
       return {
         ...existing,
         ...user
       }
-    })});
+    });
+
+    stores.update('main', {users: mergedUsers, widgets: room.widgets});
   });
 
   socket.on('user.connected', payload => {
