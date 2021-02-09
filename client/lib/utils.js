@@ -1,4 +1,4 @@
-export const MUTE_DISTANCE = 400;
+export const MUTE_DISTANCE = 500;
 
 export const getVolumeByPositions = ({x: x1, y: y1, width: width1, height: height1}, {x: x2, y: y2, width: width2, height: height2}) => {
   if (!width1) width1 = 100;
