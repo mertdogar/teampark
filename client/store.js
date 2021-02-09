@@ -77,6 +77,16 @@ const updateMe = (state) => {
     socket.emit('user.update', store.me);
 }
 
+const updateWidget = (widget) => {
+  const newWidgets = cloneDeep(store.widgets);
+  const widget_ = find(newWidgets, {id: widget.id});
+  assign(widget_, widget)
+
+  stores.update('main', {...store, widgets: newWidgets});
+  if (socket)
+    socket.emit('widget.update', widget_);
+}
+
 
 const connect = ({host, port, spaceId}) => {
   socket = io('/');
@@ -91,6 +101,7 @@ const connect = ({host, port, spaceId}) => {
 
 
   socket.on('space.updated', room => {
+    console.log(room);
 
     const mergedUsers = room.users.map(user => {
       const existing = store.users.find(user => user.id === user.id);
@@ -157,4 +168,4 @@ const setVideoEnabled = (value) => {
   myStream.getVideoTracks()[0].enabled = value;
 };
 
-export const Action = {initUserStream, getUserStream, connect, updateMe, updateUser, getPeerJS, setMicEnabled, setVideoEnabled};
+export const Action = {initUserStream, getUserStream, connect, updateMe, updateUser, getPeerJS, setMicEnabled, setVideoEnabled, updateWidget};

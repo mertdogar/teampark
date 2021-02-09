@@ -41,6 +41,11 @@ io.on('connection', (socket) => {
       space.broadcastState();
     });
 
+    socket.on('widget.update', (widget) => {
+      space.updateWidget(widget);
+      space.broadcastState();
+    });
+
     socket.on('disconnect', () => {
       spaceManager.removeUserFromRooms(socket);
       space.broadcastState();

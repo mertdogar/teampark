@@ -3,6 +3,7 @@ import map from 'lodash/map';
 import {createUseStyles} from 'react-jss';
 import {useStore} from 'yaver';
 import User from './user';
+import Widget from './widget';
 import backImage from '../assets/back.jpg';
 
 // import {Action} from '../store';
@@ -37,6 +38,7 @@ export default function(props) {
 
   return <div className={classes.root}>
     <div className={classes.space}>
+      {map(store.widgets, widget => <Widget key={widget.id} id={widget.id}/>)}
       {map(store.users, user => <User key={user.id} id={user.id} />)}
     </div>
   </div>;
