@@ -10,7 +10,6 @@ import * as utils from '../lib/utils';
 import {Action} from '../store';
 
 const USER_WIDTH = 100;
-const MUTE_DISTANCE = 400;
 
 const useStyles = createUseStyles({
   root: {
@@ -20,14 +19,18 @@ const useStyles = createUseStyles({
     left: 0,
     width: USER_WIDTH,
     height: USER_WIDTH,
+    cursor: 'pointer',
+    userSelect: 'none'
+  },
+  circle: {
+    display: 'flex',
+    flex: 1,
     backgroundColor: 'white',
     borderRadius: '50%',
     boxSizing: 'border-box',
     border: '3px solid #555b7d',
     transition: 'all 0.2s',
     overflow: 'hidden',
-    cursor: 'pointer',
-    userSelect: 'none'
   },
   me: {
     transition: 'none',
@@ -39,17 +42,21 @@ const useStyles = createUseStyles({
     width: 96,
     height: 96,
     background: 'black',
+    objectFit: 'cover'
   },
-  button: {
-    padding: 10,
-    backgroundColor: '#e53935',
-    margin: '0px 3px',
+  muteIndicator: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#e53935',
+    margin: '0px 3px',
     color: 'white',
     borderRadius: '50%',
     cursor: 'pointer',
+    position: 'absolute',
+    top: 65,
+    left: 65
   },
   indicators: {
     position: 'absolute',
@@ -64,7 +71,6 @@ const useStyles = createUseStyles({
   },
   initials: {
     color: 'white',
-    marginBottom: 10,
     fontWeight: '900'
   }
 })
@@ -140,20 +146,24 @@ export default function({id, ...props}) {
     if (videoRef.current) videoRef.current.volume = volume;
 
     return (
-      <div style={{transform: `translate3d(${user.x}px, ${user.y}px, ${user.z}px) scale(${scale})`}} className={classnames(classes.root, {[classes.me]: isMe})}>
-        <video playsInline className={classes.stream} ref={videoRef} autoPlay={true}/>
-        <div className={classes.indicators}>
-          {
-            !user.videoEnabled &&
-            <div className={classes.initials}>{nameInitials(user.name || '')}</div>
-          }
-          {
-            !user.micEnabled &&
-            <div className={classes.button}><FiMicOff/></div>
-          }
+      <div
+        style={{transform: `translate3d(${user.x}px, ${user.y}px, ${user.z}px) scale(${scale})`}}
+        className={classnames(classes.root)}>
+        <div className={classnames(classes.circle, {[classes.me]: isMe})}>
+          <video playsInline className={classes.stream} ref={videoRef} autoPlay={true}/>
+          <div className={classes.indicators}>
+            {
+              !user.videoEnabled &&
+              <div className={classes.initials}>{nameInitials(user.name || '')}</div>
+            }
+          </div>
         </div>
-
+        {
+          !user.micEnabled &&
+          <div className={classes.muteIndicator}><FiMicOff/></div>
+        }
       </div>
+
     );
   }
 
@@ -165,14 +175,17 @@ export default function({id, ...props}) {
       onStart={onDragStart}
       onDrag={onDrag}
       onStop={onDragEnd}>
-      <div className={classnames(classes.root, {[classes.me]: isMe})}>
-        <video playsInline className={classes.stream} ref={videoRef} autoPlay={true}/>
-        <div className={classes.indicators}>
-          {
-            !store.me.videoEnabled &&
-            <div className={classes.initials}>{nameInitials(store.me.name || '')}</div>
-          }
+      <div className={classnames(classes.root)}>
+        <div className={classnames(classes.circle, {[classes.me]: isMe})}>
+          <video playsInline className={classes.stream} ref={videoRef} autoPlay={true}/>
+          <div className={classes.indicators}>
+            {
+              !store.me.videoEnabled &&
+              <div className={classes.initials}>{nameInitials(store.me.name || '')}</div>
+            }
+          </div>
         </div>
+
       </div>
     </Draggable>
   );
