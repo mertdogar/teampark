@@ -40,10 +40,6 @@ export default function(props) {
   const classes = useStyles();
   const [store, setStore] = useStore('main');
 
-  useEffect(() => {
-
-  }, []);
-
   return <div className={classes.root}>
     {map(store.users, user => <div key={user.id} className={classnames(classes.user, {[classes.me]: user.id === store.me.id})}>{user.name}</div>)}
   </div>;

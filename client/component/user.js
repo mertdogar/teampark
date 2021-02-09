@@ -6,6 +6,7 @@ import nameInitials from 'name-initials';
 import {FiMicOff} from 'react-icons/fi';
 import Draggable from 'react-draggable';
 import classnames from 'classnames';
+import * as utils from '../lib/utils';
 import {Action} from '../store';
 
 const USER_WIDTH = 100;
@@ -130,28 +131,13 @@ export default function({id, ...props}) {
     // console.log(a);
   });
 
-
-
-
-
   if (!isMe) {
     const user = store.users.find(item => item.id == id);
     if (!user) return null;
 
-    const diff = Math.sqrt(Math.pow(Math.abs(user.x - store.me.x), 2) + Math.pow(Math.abs(user.y - store.me.y), 2));
-    let scale = 1;
-
-    if (diff > MUTE_DISTANCE)
-      scale = 0.5;
-    else
-      scale = 0.5 * ((MUTE_DISTANCE - diff) / MUTE_DISTANCE) + 0.5;
-
-    if (videoRef.current) {
-      if (diff > MUTE_DISTANCE)
-        videoRef.current.volume = 0;
-      else
-        videoRef.current.volume = (MUTE_DISTANCE - diff) / MUTE_DISTANCE;
-    }
+    const scale = utils.getScaleByPositions(user, store.me);
+    const volume = utils.getVolumeByPositions(user, store.me);
+    if (videoRef.current) videoRef.current.volume = volume;
 
     return (
       <div style={{transform: `translate3d(${user.x}px, ${user.y}px, ${user.z}px) scale(${scale})`}} className={classnames(classes.root, {[classes.me]: isMe})}>
