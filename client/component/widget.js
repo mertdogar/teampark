@@ -30,9 +30,14 @@ const useStyles = createUseStyles({
     padding: 4,
     textAlign: 'center',
     fontSize: '0.8em',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    boxSizing: 'border-box',
   },
   body: {
-    flex: 1
+    flex: 1,
+    boxSizing: 'border-box',
   }
 })
 
@@ -57,7 +62,7 @@ export default function({id, ...props}) {
   return (
     <Draggable position={{x: widget.x, y: widget.y, z: widget.z}} onStop={onDragEnd} scale={1}>
       <div className={classnames(classes.root)}>
-        <div className={classes.handle}>{widget.name}</div>
+        <div className={classes.handle} style={{width: widget.width}}>{widget.name}</div>
         <div className={classes.body} style={{width: widget.width, height: widget.height}}>
           {
             widget.type === 'player' &&
