@@ -69,8 +69,6 @@ const updateUser = (id, state) => {
   stores.update('main', {...store, users: newUsers});
 }
 
-
-
 const updateMe = (state) => {
   stores.update('main', {...store, me: {...store.me, ...state}});
   if (socket)
@@ -101,7 +99,7 @@ const connect = ({host, port, spaceId}) => {
 
 
   socket.on('space.updated', room => {
-    console.log(room);
+    // console.log(room);
 
     const mergedUsers = room.users.map(user => {
       const existing = store.users.find(user => user.id === user.id);
