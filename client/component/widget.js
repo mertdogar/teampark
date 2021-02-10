@@ -48,8 +48,19 @@ export default function({id, ...props}) {
 
   const widget = store.widgets.find(item => item.id == id);
 
-  const onDragEnd = useCallback((a, b) => {
-    console.log('end');
+  const onDragStart = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  const onDrag = useCallback((event, b) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  const onDragEnd = useCallback((event, b) => {
+    event.preventDefault();
+    event.stopPropagation();
     Action.updateWidget({
       ...widget,
       x: b.x,
@@ -60,7 +71,7 @@ export default function({id, ...props}) {
   const volume = utils.getVolumeByPositions(widget, store.me);
 
   return (
-    <Draggable position={{x: widget.x, y: widget.y, z: widget.z}} onStop={onDragEnd} scale={1}>
+    <Draggable position={{x: widget.x, y: widget.y, z: widget.z}} scale={props.scale} onStart={onDragStart} onDrag={onDrag} onStop={onDragEnd}>
       <div className={classnames(classes.root)}>
         <div className={classes.handle} style={{width: widget.width}}>{widget.name}</div>
         <div className={classes.body} style={{width: widget.width, height: widget.height}}>

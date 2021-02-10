@@ -125,16 +125,23 @@ export default function({id, ...props}) {
     };
   }, []);
 
-  const onDragStart = useCallback((a) => {
+  const onDragStart = useCallback((event) => {
     // console.log(a);
+    event.preventDefault();
+    event.stopPropagation();
   });
 
-  const onDrag = useCallback((a, b) => {
+  const onDrag = useCallback((event, b) => {
+    event.preventDefault();
+    event.stopPropagation();
     updateMe({x: b.x, y: b.y});
+
+
   });
 
-  const onDragEnd = useCallback((a) => {
-    // console.log(a);
+  const onDragEnd = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
   });
 
   if (!isMe) {
@@ -171,19 +178,19 @@ export default function({id, ...props}) {
     <Draggable
       defaultPosition={{x: 0, y: 0}}
       position={null}
-      scale={1}
+      scale={props.scale}
       onStart={onDragStart}
       onDrag={onDrag}
       onStop={onDragEnd}>
-      <div className={classnames(classes.root)}>
+      <div className={classnames(classes.root)} onTouchStart={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>
         <div className={classnames(classes.circle, {[classes.me]: isMe})}>
           <video playsInline className={classes.stream} ref={videoRef} autoPlay={true}/>
-          <div className={classes.indicators}>
-            {
-              !store.me.videoEnabled &&
+          {
+            !store.me.videoEnabled &&
+            <div className={classes.indicators}>
               <div className={classes.initials}>{nameInitials(store.me.name || '')}</div>
-            }
-          </div>
+              </div>
+          }
         </div>
 
       </div>
