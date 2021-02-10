@@ -85,7 +85,7 @@ export default function(props) {
             const transform = `translate(${translation.x}px, ${translation.y}px) scale(${scale})`;
             return (
               <div className={classes.space} style={{transform}}>
-                {/* {map(store.widgets, widget => <Widget key={widget.id} id={widget.id} transform={transform} scale={scale}/>)} */}
+                {map(store.widgets, widget => <Widget key={widget.id} id={widget.id} transform={transform} scale={scale}/>)}
                 {map(store.users, user => <User key={user.id} id={user.id} transform={transform} scale={scale}/>)}
               </div>
             )
