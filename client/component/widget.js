@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useCallback, useState} from 'react';
-import throttle from 'lodash/throttle';
 import {createUseStyles} from 'react-jss';
 import {useStore} from 'yaver';
 import ReactPlayer from 'react-player';
 import * as utils from '../lib/utils';
 import Draggable from 'react-draggable';
 import classnames from 'classnames';
+import StickerWidget from './widget/sticker';
 import {Action} from '../store';
 
 const useStyles = createUseStyles({
@@ -36,11 +36,11 @@ const useStyles = createUseStyles({
     boxSizing: 'border-box',
   },
   body: {
+    display: 'flex',
     flex: 1,
     boxSizing: 'border-box',
   }
-})
-
+});
 
 export default function({id, ...props}) {
   const classes = useStyles();
@@ -82,6 +82,10 @@ export default function({id, ...props}) {
           {
             widget.type === 'iframe' &&
             <iframe frameborder="0" src={widget.data} />
+          }
+          {
+            widget.type === 'sticker' &&
+            <StickerWidget data={widget.data} volume={volume}/>
           }
         </div>
       </div>

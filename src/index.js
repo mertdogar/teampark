@@ -9,6 +9,7 @@ const SpaceManager = require('./space-manager');
 const spaceManager = new SpaceManager(io);
 const {nanoid} = require('nanoid');
 
+app.use('/asset', express.static('client/assets', {index: null}))
 app.use(express.static('public', {index: null}))
 
 app.get('/', (req, res) => {

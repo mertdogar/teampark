@@ -46,6 +46,22 @@ class Space {
         width: 150,
         height: 100,
         data: 'https://www.youtube.com/watch?v=BD_guK9b64k  ',
+      }),
+      new Widget({
+        id: 'fountain1',
+        type: 'sticker',
+        name: `Fountain 1`,
+        createdAt: new Date(),
+        ownerId: null,
+        x: 1200,
+        y: 700,
+        z: 1,
+        width: 96,
+        height: 96,
+        data: {
+          image: 'asset/fountain.gif',
+          sound: 'asset/fountain.wav'
+        },
       })
     ];
 
